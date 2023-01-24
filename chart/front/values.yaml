@@ -1,0 +1,11 @@
+tags: 
+  front: defosa/nginx-php:latest
+
+db_connections: 
+  db_name: ipdata
+  db_password: 12345678
+  db_user: testuser
+ingresses:
+  front: front.cluster.local
+
+tables: inet_test

@@ -1,0 +1,26 @@
+---
+- hosts: all
+  become: yes
+
+
+  tasks:
+    - name: install helm bitnami/postgres
+      shell: |
+        helm install -n {{ namespace }} pg chart/postgresql \
+        --set global.postgresql.auth.database="{{ db_name_1 }}" \
+        --set global.postgresql.auth.username="{{ db_user }}" \
+        --set global.postgresql.auth.password="{{ db_password }}" \
+        --set global.storageClass="{{ storageclass }}" \
+        --set initdbScripts."init\.sql"="CREATE DATABASE {{ db_name_1 }} OWNER {{ db_user }};
+              GRANT ALL PRIVILEGES ON DATABASE {{ db_name_1 }} TO {{ db_user }};
+              CREATE TABLE {{ create_table }} (address INET);"
+              
+    - name: install helm front-nginx-php
+      shell: |
+        helm install -n {{ namespace }} front chart/front \
+        --set db_connections.db_name="{{ db_name_1 }}" \
+        --set db_connections.db_user="{{ db_user }}" \
+        --set db_connections.db_password="{{ db_password }}" \
+        --set ingresses.front="{{ url_front }}" \
+        --set tables="{{ create_table }}"
+              

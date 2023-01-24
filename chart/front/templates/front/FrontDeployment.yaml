@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: front
+  labels:
+    name: front
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: front
+  template:
+    metadata:
+      labels:
+        app: front
+    spec:
+      containers:
+      - name: front
+        image: {{ .Values.tags.front }}
+        volumeMounts:
+        - name: front-index
+          mountPath: /var/www/html/index.php
+          subPath: index.php
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+      volumes:
+        - name: front-index
+          configMap:
+            name: front-index
+      restartPolicy: Always
